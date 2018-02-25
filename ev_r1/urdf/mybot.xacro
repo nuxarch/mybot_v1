@@ -1,0 +1,278 @@
+<?xml version="1.0"?>
+<robot name="mybot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <static>false </static>
+  <!-- ======================definisi warna===================================== -->
+  <material name="Black">
+    <color rgba="0.0 0.0 0.0 1.0"/>
+  </material>
+  <material name="Red">
+    <color rgba="0.8 0.0 0.0 1.0"/>
+  </material>
+  <material name="White">
+    <color rgba="1.0 1.0 1.0 1.0"/>
+  </material>
+  <material name="Blue">
+    <color rgba="0.0 0.0 0.8 1.0"/>
+  </material>
+  <!-- ======================eof definisi warna===================================== -->
+
+  <!-- ====================== makro variable===================================== -->
+  <!-- base -->
+  <xacro:property name="p_base" value="0.18" />
+  <xacro:property name="l_base" value="0.08" />
+  <xacro:property name="t_base" value="0.04" />
+  <xacro:property name="m_base" value="1" />
+  <!-- wheel -->
+  <xacro:property name="wheel_diameter" value="0.03" />
+  <xacro:property name="wheel_length" value="0.02" />
+  <xacro:property name="wheel_mass" value="0.7" />
+
+  <xacro:property name="wheel_base_dist" value="0.002" />
+
+  <property name="M_PI" value="3.1415926535897931" />
+  <property name="M_PI_2" value="1.570796327" />
+  <property name="DEG_TO_RAD" value="0.017453293" />
+
+  <macro name="cylinder_inertia" params="m r h">
+    <inertia  ixx="${m*(3*r*r+h*h)/12}" ixy = "0" ixz = "0"
+              iyy="${m*(3*r*r+h*h)/12}" iyz = "0"
+              izz="${m*r*r/2}" /> 
+  </macro>
+  <xacro:macro name="box_inertia" params="x y z mass">
+    <inertia ixx="${0.0833333 * mass * (y*y + z*z)}" ixy="0.0" ixz="0.0"
+             iyy="${0.0833333 * mass * (x*x + z*z)}" iyz="0.0"
+             izz="${0.0833333 * mass * (x*x + y*y)}" />
+  </xacro:macro>
+  
+  <!-- Macro for the inertial properties of a box -->
+  <xacro:macro name="box_inertial" params="x y z mass * origin">
+    <inertial>
+      <mass value="${mass}" />
+      <xacro:insert_block name="origin" />
+      <xacro:box_inertia x="${x}" y="${y}" z="${z}" mass="${mass}" />
+    </inertial>
+  </xacro:macro>
+  <!-- == eof makro variable==== -->
+  <!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
+
+  <!-- 1. =====================world definition ======================================== -->
+  <!-- <link name="world"/> -->
+  <!-- 1. == eof world definition ===== -->
+
+  <!-- 2. ===================== base definition ======================================== -->
+  <!-- <joint name="joint0" type="fixed"> -->
+  <!--   <origin xyz=" ${p_base/2} ${l_base/2} ${t_base}" rpy="0 0 0"/> -->
+  <!--   <axis xyz="0 0 1"/> -->
+  <!--   <parent link="world"/> -->
+  <!--   <child link="base"/> -->
+  <!-- </joint> -->
+  
+  <link name="base">
+    <visual>
+      <geometry>
+        <box size="${p_base} ${l_base} ${t_base}"/>
+      </geometry>
+      <!-- <origin xyz=" ${p_base/2} ${l_base/2} ${t_base}" rpy="0 0 0"/> -->
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${p_base} ${l_base} ${t_base}"/>
+      </geometry>
+      <!-- <origin xyz=" ${p_base/2} ${l_base/2} ${t_base}" rpy="0 0 0"/> -->
+    </collision>
+    <inertial>
+      <mass value="${m_base}"/>
+      <box_inertia x="${p_base}" y="${l_base}" z="${t_base}" mass="${m_base}"/>
+    </inertial>
+  </link>
+  <!-- <gazebo reference="base"> -->
+  <!--   <mu1>0.2</mu1> -->
+  <!--   <mu2>0.2</mu2> -->
+  <!--   <material>Gazebo/Blue</material> -->
+  <!--   <turnGravityOff>false</turnGravityOff> -->
+  <!-- </gazebo> -->
+  <!-- 2. oef base definition -->
+
+  <!-- 3. ===================== rfw definition ======================================== -->
+  <joint name="joint1" type="continuous">
+    <!-- <origin xyz="0.04 ${((l_base/2)+(wheel_length/2)+wheel_base_dist)} 0" rpy="${M_PI/2} 0 0"/> -->
+    <!-- <axis xyz="0 0 1"/> -->
+    <parent link="base"/>
+    <child link="right_front_wheel"/>
+  </joint>
+
+  <link name="right_front_wheel">
+    <visual>
+      <geometry>
+        <cylinder length="${wheel_length}" radius="${wheel_diameter}"/>
+      </geometry>
+      <origin xyz="0.04 ${((l_base/2)+(wheel_length/2)+wheel_base_dist)} 0" rpy="${M_PI/2} 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="${wheel_length}" radius="${wheel_diameter}"/>
+      </geometry>
+      <origin xyz="0.04 ${((l_base/2)+(wheel_length/2)+wheel_base_dist)} 0" rpy="${M_PI/2} 0 0"/>
+    </collision>
+    <inertial>
+      <mass value="${wheel_mass}"/>
+      <cylinder_inertia m="${wheel_mass}" r="${wheel_diameter}" h="${wheel_length}"/>
+    </inertial>
+  </link>
+  <!-- <gazebo reference="right_front_wheel"> -->
+  <!--   <mu1>0.2</mu1> -->
+  <!--   <mu2>0.2</mu2> -->
+  <!--   <material>Gazebo/Red</material> -->
+  <!--   <turnGravityOff>false</turnGravityOff> -->
+  <!-- </gazebo> -->
+  <!-- 4. eof rbw definition === -->
+
+  <!-- 5. ===================== lfw definition ======================================== -->
+  <joint name="joint2" type="continuous">
+    <origin xyz="0.04 ${0-((l_base/2)+(wheel_length/2)+wheel_base_dist)} 0" rpy="${M_PI/2} 0 0"/>
+    <axis xyz="0 0 1"/>
+    <parent link="base"/>
+    <child link="left_front_wheel"/>
+  </joint>
+
+  <link name="left_front_wheel">
+    <visual>
+      <geometry>
+        <cylinder length="${wheel_length}" radius="${wheel_diameter}"/>
+      </geometry>
+      <!-- <origin xyz="0.04 ${0-((l_base/2)+(wheel_length/2)+wheel_base_dist)} 0" rpy="${M_PI/2} 0 0"/> -->
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="${wheel_length}" radius="${wheel_diameter}"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="${wheel_mass}"/>
+      <cylinder_inertia m="${wheel_mass}" r="${wheel_diameter}" h="${wheel_length}"/>
+    </inertial>
+  </link>
+  <!-- <gazebo reference="left_front_wheel"> -->
+  <!--   <mu1>0.2</mu1> -->
+  <!--   <mu2>0.2</mu2> -->
+  <!--   <material>Gazebo/Green</material> -->
+  <!--   <turnGravityOff>false</turnGravityOff> -->
+  <!-- </gazebo> -->
+  <!-- 5.  eof lbw definition= -->
+
+  <!-- 6. ===================== rbw definition ======================================== -->
+  <!-- <joint name="joint3" type="continuous"> -->
+  <!--   <origin xyz="-0.04 ${((l_base/2)+(wheel_length/2)+wheel_base_dist)} 0" rpy="${M_PI/2} 0 0"/> -->
+  <!--   <axis xyz="0 0 1"/> -->
+  <!--   <parent link="base"/> -->
+  <!--   <child link="right_back_wheel"/> -->
+  <!-- </joint> -->
+
+  <!-- <link name="right_back_wheel"> -->
+  <!--   <visual> -->
+  <!--     <geometry> -->
+  <!--       <cylinder length="${wheel_length}" radius="${wheel_diameter}"/> -->
+  <!--     </geometry> -->
+  <!--   </visual> -->
+  <!--   <collision> -->
+  <!--     <geometry> -->
+  <!--       <cylinder length="${wheel_length}" radius="${wheel_diameter}"/> -->
+  <!--     </geometry> -->
+  <!--   </collision> -->
+  <!--   <inertial> -->
+  <!--     <mass value="${wheel_mass}"/> -->
+  <!--     <cylinder_inertia m="${wheel_mass}" r="${wheel_diameter}" h="${wheel_length}"/> -->
+  <!--   </inertial> -->
+  <!-- </link> -->
+  <!-- <gazebo reference="right_back_wheel"> -->
+  <!--   <mu1>0.2</mu1> -->
+  <!--   <mu2>0.2</mu2> -->
+  <!--   <material>Gazebo/Red</material> -->
+  <!--   <turnGravityOff>false</turnGravityOff> -->
+  <!-- </gazebo> -->
+  <!-- 6. eof rbw definition === -->
+
+  <!-- 5. ===================== lbw definition ======================================== -->
+  <!-- <joint name="joint4" type="continuous"> -->
+  <!--   <origin xyz="-0.04 ${0-((l_base/2)+(wheel_length/2)+wheel_base_dist)} 0" rpy="${M_PI/2} 0 0"/> -->
+  <!--   <axis xyz="0 0 1"/> -->
+  <!--   <parent link="base"/> -->
+  <!--   <child link="left_back_wheel"/> -->
+  <!-- </joint> -->
+
+  <!-- <link name="left_back_wheel"> -->
+  <!--   <visual> -->
+  <!--     <geometry> -->
+  <!--       <cylinder length="${wheel_length}" radius="${wheel_diameter}"/> -->
+  <!--     </geometry> -->
+  <!--   </visual> -->
+  <!--   <collision> -->
+  <!--     <geometry> -->
+  <!--       <cylinder length="${wheel_length}" radius="${wheel_diameter}"/> -->
+  <!--     </geometry> -->
+  <!--   </collision> -->
+  <!--   <inertial> -->
+  <!--     <mass value="${wheel_mass}"/> -->
+  <!--     <cylinder_inertia m="${wheel_mass}" r="${wheel_diameter}" h="${wheel_length}"/> -->
+  <!--   </inertial> -->
+  <!-- </link> -->
+  <!-- <gazebo reference="left_back_wheel"> -->
+  <!--   <mu1>0.2</mu1> -->
+  <!--   <mu2>0.2</mu2> -->
+  <!--   <material>Gazebo/Green</material> -->
+  <!--   <turnGravityOff>false</turnGravityOff> -->
+  <!-- </gazebo> -->
+  <!-- 7.  eof lbw definition= -->
+
+  <!-- <gazebo> -->
+  <!--   <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so"> -->
+  <!--     <robotNamespace>/mybot</robotNamespace> -->
+  <!--   </plugin> -->
+  <!-- </gazebo> -->
+
+  <!-- <gazebo> -->
+  <!--   <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so"> -->
+  <!--     <alwaysOn>true</alwaysOn> -->
+  <!--     <updateRate>100</updateRate> -->
+  <!--     <leftJoint>left_wheel_hinge</leftJoint> -->
+  <!--     <rightJoint>right_wheel_hinge</rightJoint> -->
+  <!--     <wheelSeparation>${l_base}</wheelSeparation> -->
+  <!--     <wheelDiameter>${2*wheel_diameter}</wheelDiameter> -->
+  <!--     <torque>20</torque> -->
+  <!--     <commandTopic>mybot/cmd_vel</commandTopic> -->
+  <!--     <odometryTopic>mybot/odom_diffdrive</odometryTopic> -->
+  <!--     <odometryFrame>odom</odometryFrame> -->
+  <!--     <robotBaseFrame>footprint</robotBaseFrame> -->
+  <!--     <publishWheelTF>true</publishWheelTF> -->
+  <!--     <publishWheelJointState>true</publishWheelJointState> -->
+  <!--     <legacyMode>false</legacyMode> -->
+  <!--     <wheelAcceleration>10</wheelAcceleration> -->
+  <!--     <wheelTorque>5</wheelTorque> -->
+  <!--     <rosDebugLevel>na</rosDebugLevel> -->
+  <!--     <odometrysource>1</odometrysource> -->
+  <!--   </plugin> -->
+  <!-- </gazebo> -->
+
+  <!-- <transmission name="tran1"> -->
+  <!--   <type>transmission_interface/SimpleTransmission</type> -->
+  <!--   <joint name="joint1"> -->
+  <!--     <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
+  <!--   </joint> -->
+  <!--   <actuator name="motor1"> -->
+  <!--     <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
+  <!--     <mechanicalReduction>10</mechanicalReduction> -->
+  <!--   </actuator> -->
+  <!-- </transmission> -->
+
+  <!-- <transmission name="tran2"> -->
+  <!--   <type>transmission_interface/SimpleTransmission</type> -->
+  <!--   <joint name="joint2"> -->
+  <!--     <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
+  <!--   </joint> -->
+  <!--   <actuator name="motor2"> -->
+  <!--     <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface> -->
+  <!--     <mechanicalReduction>10</mechanicalReduction> -->
+  <!--   </actuator> -->
+  <!-- </transmission> -->
+
+</robot>

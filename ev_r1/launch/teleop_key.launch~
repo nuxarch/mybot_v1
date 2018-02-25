@@ -1,0 +1,22 @@
+<launch>
+  <arg name="model" default="$(find wheel)/launch/lidar.launch"/>
+  <arg name="gui" default="true"/>
+  <arg name="port" value="/dev/rfcomm0 460800" doc="using port serial"/>
+  
+  <param name="robot_description" textfile="/home/fat/lidar_ws/src/wheel/urdf/wheel.urdf"/>
+  <!-- <param name="robot_description" textfile="/home/fat/lidar_ws/tmp/Slam-Robot/robot.urdf"/> -->
+  <!-- <param name="use_gui" value="$(arg gui)"/> -->
+  <!-- <param name="use_port" value="$(arg port)"/> -->
+  
+  <!-- <node name="tf_broadcaster" pkg="robotl_setup_tf" type="tf_broadcaster" /> -->
+  <!-- <node name="tf_listener" pkg="robot_setup_tf" type="tf_listener" /> -->
+  <!-- <node name="state_publisher" pkg="r2d2" type="state_publisher" /> -->
+
+  <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" /> -->
+  <!-- <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" /> -->
+  <!-- <node name="wheel_publisher" pkg="wheel" type="wheel_publisher" /> -->
+  <!-- <node pkg="rqt_gui" name="rqt_gui"  type="rqt_gui"/> -->
+  <node pkg="serial" name="minibot"  type="minibot" args="$(arg port)"/>
+  <node pkg="teleop_twist_keyboard" name="teleop_twist_keyboard.py"/>
+  <!-- <node name="rviz" pkg="rviz" type="rviz" required="true" /> -->
+</launch>

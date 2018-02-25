@@ -1,0 +1,15 @@
+<launch>
+  <arg name="model" default="$(find ev_r1)/launch/rviz_control.launch"/>
+  <arg name="gui" default="true"/>
+  <arg name="port" value="/dev/robot 460800" doc="using port serial"/>
+  
+  <param name="robot_description" textfile="/home/fat/ros/ros_ws/src/ev_r1/urdf/mybot_backup.urdf"/>
+  <node pkg="serial" name="mybot_driver_rev02"  type="mybot_driver_rev02" args="$(arg port)"/>
+
+  <!-- <param name="robot_description" textfile="/home/fat/ros/ros_ws/src/ev_r1/urdf/mybot.urdf"/> -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+  <!-- <node pkg="rqt_gui" name="rqt_gui"  type="rqt_gui"/> -->
+  <node name="rviz" pkg="rviz" type="rviz" required="true" />
+  <node pkg="ev_r1" name="ev_r1" type="ev_r1" />
+</launch>

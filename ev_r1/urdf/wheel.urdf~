@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<robot name="wheel">
+  <link name="laser">
+    <visual>
+      <geometry>
+        <!--sphere radius="0.02"/-->
+  	<cylinder length="0.04" radius="0.03"/>
+      </geometry>
+      <origin xyz="0.14 0.04 0.06" rpy="0 0 0.06"/>
+      <material name=""/> 
+    </visual>
+    <collision>
+      <geometry>
+        <!--sphere radius="0.02"/-->
+  	<cylinder length="0.02" radius="0.03"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="base">
+    <visual>
+      <geometry>
+  	<box size="0.18 0.08 0.04"/>
+      </geometry>
+      <origin xyz="0.09 0.04 0.02" rpy="0 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+  	<box size="0.18 0.08 0.04"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="left_back_wheel">
+    <visual>
+      <geometry>
+  	<cylinder length="0.02" radius="0.03"/>
+      </geometry>
+      <origin xyz="0.04 -0.01 0.02" rpy="1.5714285714 0 0"/>
+      <!-- <origin xyz="0 0 0" rpy="1.5714285714 0 0"/> -->
+    </visual>
+    <collision>
+      <geometry>
+  	<cylinder length="0.02" radius="0.03"/>
+      </geometry>
+    </collision>
+  </link>
+  
+  <link name="right_back_wheel">
+    <visual>
+      <geometry>
+  	<cylinder length="0.02" radius="0.03"/>
+      </geometry>
+      <origin xyz="0.04 0.09 0.02" rpy="1.5714285714 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+  	<cylinder length="0.02" radius="0.03"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- <link name="left_front_wheel"> -->
+  <!--   <visual> -->
+  <!--     <geometry> -->
+  <!-- 	<cylinder length="0.02" radius="0.03"/> -->
+  <!--     </geometry> -->
+  <!--     <origin xyz="0.14 0.09 0.02" rpy="1.5714285714 0 0"/> -->
+  <!--   </visual> -->
+  <!--   <collision> -->
+  <!--     <geometry> -->
+  <!-- 	<cylinder length="0.02" radius="0.03"/> -->
+  <!--     </geometry> -->
+  <!--   </collision> -->
+  <!-- </link> -->
+
+  <!-- <link name="right_front_wheel"> -->
+  <!--   <visual> -->
+  <!--     <geometry> -->
+  <!-- 	<cylinder length="0.02" radius="0.03"/> -->
+  <!--     </geometry> -->
+  <!--     <origin xyz="0.14 -0.01 0.02" rpy="1.5714285714 0 0"/> -->
+  <!--   </visual> -->
+  <!--   <collision> -->
+  <!--     <geometry> -->
+  <!-- 	<cylinder length="0.02" radius="0.03"/> -->
+  <!--     </geometry> -->
+  <!--   </collision> -->
+  <!-- </link> -->
+  
+  <joint name="joint0" type="fixed">
+    <parent link="base"/>
+    <child link="laser"/>
+  </joint>
+  
+  <joint name="joint1" type="continuous">
+    <parent link="base"/>
+    <child link="left_back_wheel"/>
+  </joint>
+  
+  <joint name="joint2" type="continuous">
+    <parent link="base"/>
+    <child link="right_back_wheel"/>
+  </joint>
+
+  <!-- <joint name="joint3" type="continuous"> -->
+  <!--   <parent link="base"/> -->
+  <!--   <child link="left_front_wheel"/> -->
+  <!-- </joint> -->
+  
+  <!-- <joint name="joint4" type="continuous"> -->
+  <!--   <parent link="base"/> -->
+  <!--   <child link="right_front_wheel"/> -->
+  <!-- </joint> -->
+</robot>
+
